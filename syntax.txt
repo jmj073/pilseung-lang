@@ -1,4 +1,4 @@
-<program> -> ((<stmt> <endline>)* <stmt>)?
+<program> -> (<stmt> <endline>)*
 <stmt> ->
     <expr>
     | <print>
@@ -12,7 +12,7 @@
 
 <print> -> <expr> 신!!?고!합니다!
 <while> ->
-    <name> <rank> <call_word> (대하여!)? 경례! <endline>
+    <symbol> (대하여!)? 경례! <endline>
     (<stmt> <endline>)*
     바로!
 <array> -> <symbol> !!+ (<rank>!+)*
@@ -22,5 +22,5 @@
 <mul> -> <symbol> ! <pilseung_literal> <expr>
 <symbol> -> <name> <rank> <call_word>?
 
-<pilseung_literal> -> (필!*)*승!+
+<pilseung_literal> -> (필!*)+승!+
 <call_word> -> 님 | 께
