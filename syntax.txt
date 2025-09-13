@@ -1,0 +1,26 @@
+<program> -> ((<stmt> <endline>)* <stmt>)?
+<stmt> ->
+    <expr>
+    | <print>
+    | <while>
+    | <array>
+<expr> ->
+    <var_set>
+    | <add>
+    | <mul>
+    | <symbol>
+
+<print> -> <expr> 신!!?고!합니다!
+<while> ->
+    <name> <rank> <call_word> (대하여!)? 경례! <endline>
+    (<stmt> <endline>)*
+    바로!
+<array> -> <symbol> !!+ (<rank>!+)*
+
+<var_set> -> <symbol> ! <pilseung_literal>?
+<add> -> <symbol> <pilseung_literal>
+<mul> -> <symbol> ! <pilseung_literal> <expr>
+<symbol> -> <name> <rank> <call_word>?
+
+<pilseung_literal> -> (필!*)*승!+
+<call_word> -> 님 | 께
