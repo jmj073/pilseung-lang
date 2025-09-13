@@ -4,10 +4,11 @@ LD=$(CXX)
 AR=ar
 
 DEBUG=-ggdb
-CXXFLAGS=-O3 -Wall $(DEBUG) $(INCPATHS) -std=c++20
-LDFLAGS=-O3 $(DEBUG) $(LIBPATHS) -L. -lreadline
+CXXFLAGS=-O3 -Wall $(DEBUG) $(INCPATHS) -std=c++23
+# LDFLAGS=-O3 $(DEBUG) $(LIBPATHS) -L. -lreadline
+LDFLAGS=-O3 $(DEBUG) $(LIBPATHS)
 
-LIBSOURCES=readline.cpp
+LIBSOURCES=readline.cpp tokenize.cpp parse.cpp
 LIBOBJS=$(LIBSOURCES:%.cpp=%.o)
 
 MAIN=interpreter.cpp
@@ -28,4 +29,4 @@ libpilseung.a: $(LIBOBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf *.o $(TARGET)
+	rm -rf *.o *.a $(TARGET)

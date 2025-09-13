@@ -5,5 +5,5 @@
 
 class ReadLine {
 public:
-    std::optional<std::string> get(const std::string& prompt);
+    std::optional<std::wstring> get(const std::wstring& prompt);
 };

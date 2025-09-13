@@ -2,11 +2,11 @@
 
 #include <vector>
 #include <variant>
+#include <optional>
 #include <memory>
 #include <string>
 
 namespace ps {
-
     enum class Rank {
         R1, R2, R3, R4, OTHER
     };
@@ -18,7 +18,7 @@ namespace ps {
     using Expr = std::variant<VarSet, Add, Mul, Symbol>;
 
     struct Symbol {
-        std::string name;
+        std::wstring name;
         Rank rank;
         bool call_word;
     };
