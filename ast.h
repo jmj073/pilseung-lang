@@ -63,4 +63,6 @@ namespace ps {
     struct Program {
         std::vector<Stmt> stmts;
     };
+
+    void print_ast(const Program& ast);
 }

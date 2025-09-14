@@ -22,5 +22,7 @@ int main() {
 
         auto ast = ps::parse(tokens);
 
+        print_ast(ast);
+        wcout << endl << flush;
     }
 }

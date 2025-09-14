@@ -9,4 +9,5 @@ namespace ps {
     bool is_endline_token(const std::wstring& token);
     bool is_callword_token(const std::wstring& token);
     bool is_pilseung_literal_token(const std::wstring& token);
+    bool is_singo_token(const std::wstring& token);
 } // namespace ps

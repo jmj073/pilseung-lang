@@ -46,4 +46,9 @@ namespace ps {
         return regex_match(token, re);
     }
 
+    bool is_singo_token(const std::wstring& token) {
+        wregex re(LR"(신!!?고!합니다!)");
+        return regex_match(token, re);
+    }
+
 } // namespace ps
