@@ -2,6 +2,7 @@
 
 #include "readline.h"
 #include "tokenize.h"
+#include "parse.h"
 
 using namespace std;
 
@@ -13,10 +14,13 @@ int main() {
     ReadLine read_line;
 
     while (auto in = read_line.get(prompt)) {
-        auto tokens = tokenize(*in);
+        auto tokens = ps::tokenize(*in);
 
         for (auto& token: tokens) {
             wcout << L"<" << token << L">" << endl;
         }
+
+        auto ast = ps::parse(tokens);
+
     }
 }

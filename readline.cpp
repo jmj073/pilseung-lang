@@ -1,14 +1,19 @@
 // #include <readline/readline.h>
 // #include <readline/tilde.h>
 
-#include <cstdlib>
-#include <codecvt>
-#include <locale>
 #include <iostream>
+#include <cstdlib>
+#include <unistd.h>
+#include <cstdio>
 
 #include "readline.h"
+#include "util.h"
 
 using namespace std;
+
+ReadLine::ReadLine()
+    : m_term("/dev/tty")
+{ }
 
 /*
 optional<wstring> ReadLine::get(const wstring& prompt) {
@@ -27,11 +32,15 @@ optional<wstring> ReadLine::get(const wstring& prompt) {
 }
 */
 
-
 optional<wstring> ReadLine::get(const wstring& prompt) {
+    if (stdin_is_tty()) {
+        m_term << prompt << flush;
+    }
+
     wstring line;
-    wcout << prompt;
-    getline(wcin, line);
-    if (!wcin) return nullopt;
+
+    if (!getline(wcin, line)) {
+        return nullopt;
+    }
     return line;
 }
