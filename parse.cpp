@@ -1,28 +1,212 @@
 #include <regex>
+#include <map>
+#include <iostream>
 
 #include "parse.h"
 #include "tokenize.h"
+#include "util.h"
 
 using namespace std;
 
 namespace ps {
+    static size_t rank2size(Rank rank) {
+        map<Rank, size_t> r2sz{
+            { Rank::R1, 1 },
+            { Rank::R2, 2 },
+            { Rank::R3, 4 },
+            { Rank::R4, 8 },
+        };
+        
+        auto it = r2sz.find(rank);
+        return (it == r2sz.end() ? 4 : it->second);
+    }
+
+    static Rank str2rank(const wstring& str) {
+        map<wstring, Rank> s2r{
+            { L"이병", Rank::R1 },
+            { L"일병", Rank::R2 },
+            { L"상병", Rank::R3 },
+            { L"병장", Rank::R4 },
+        };
+
+        auto it = s2r.find(str);
+        return (it == s2r.end() ? Rank::OTHER : it->second);
+    }
+
+    static wstring rank2str(Rank rank) {
+        map<Rank, wstring> r2s{
+            { Rank::R1, L"이병" },
+            { Rank::R2, L"일병" },
+            { Rank::R3, L"상병" },
+            { Rank::R4, L"병장" },
+        };
+
+        auto it = r2s.find(rank);
+        return (it == r2s.end() ? L"<unknown>" : it->second);
+    }
+
     template <typename It>
-    Print parse_print(It& cur, It end) {
-        while (cur != end && !is_singo_token(*cur)) {
-            ++cur;
+    int64_t parse_pilseung_literal(It&cur, It end);
+    template <typename It>
+    Symbol parse_symbol(It& cur, It end);
+    template <typename It>
+    Expr parse_expr(It& cur, It end);
+    template <typename It>
+    Array parse_array(It& cur, It end);
+    template <typename It>
+    While parse_while(It& cur, It end);
+    template <typename It>
+    Print parse_print(It& cur, It end);
+    template <typename It>
+    Stmt parse_stmt(It& cur, It end);
+    template <typename It>
+    Program parse_program(It& cur, It end);
+
+    template <typename It>
+    int64_t parse_pilseung_literal(It&cur, It end) {
+        wcout << "parse_pilseung_literal" << endl;
+        if (cur == end) throw EOFError(L"<pilseung_literal>");
+        if (!is_pilseung_literal_token(*cur)) {
+            throw Unexpected(*cur, L"<pilseung_literal>");
         }
 
-        if (cur == end) {
-            throw EOFError(L"singo");
+        wregex re(LR"([^!](!)*)");
+        auto tmp = wregex_view(*cur, re)
+            | views::transform([](auto&& m) { return m.str().size() - 1; });
+        vector<size_t> ex_mark_cnt(tmp.begin(), tmp.end());
+
+        int64_t ret = 1;
+
+        for (size_t i = 0; i < ex_mark_cnt.size() - 1; ++i) {
+            ret *= ex_mark_cnt[i];
         }
 
         ++cur;
+        return ret * (ex_mark_cnt.back() % 2 ? 1 : -1);
+    }
 
-        return Print();
+    template <typename It>
+    Symbol parse_symbol(It& cur, It end) {
+        wcout << "parse_symbol" << endl;
+        auto symbol = Symbol();
+
+        if (cur == end) throw EOFError(L"<name>");
+        if (!is_normal_token(*cur)) throw Unexpected(*cur);
+        symbol.name = *cur;
+
+        if (++cur == end) throw EOFError(L"<rank>");
+        if (!is_normal_token(*cur)) throw Unexpected(*cur);
+        symbol.rank = str2rank(*cur);
+
+        if (++cur == end) return symbol;
+        if (is_callword_token(*cur)) {
+            symbol.call_word = true;
+            ++cur;
+        }
+
+        return symbol;
+    }
+
+    template <typename It>
+    Expr parse_expr(It& cur, It end) {
+        wcout << "parse_expr" << endl;
+        Symbol sym = parse_symbol(cur, end);
+        if (cur == end || is_endline_token(*cur)) return sym;
+
+        if (*cur == L"!") {
+            ++cur;
+            if (cur == end || !is_pilseung_literal_token(*cur)) {
+                auto vs = VarSet();
+                vs.symbol = sym;
+                return vs;
+            }
+
+            auto pslit = parse_pilseung_literal(cur, end);
+
+            if (cur == end || is_endline_token(*cur)) {
+                auto vs = VarSet();
+                vs.symbol = sym;
+                vs.pslit = pslit;
+                return vs;
+            }
+
+            auto mul = Mul();
+            mul.symbol = sym;
+            mul.pslit = pslit;
+            mul.expr = make_unique<Expr>(parse_expr(cur, end));
+
+            return mul;
+        }
+
+        if (!is_pilseung_literal_token(*cur)) {
+            return sym;
+        }
+
+        auto add = Add();
+        add.symbol = sym;
+        add.pslit = parse_pilseung_literal(cur, end);
+
+        return add;
+    }
+
+    template <typename It>
+    Array parse_array(It& cur, It end) {
+        wcout << "parse_array" << endl;
+        auto sym = parse_symbol(cur, end);
+
+        if (sym.call_word) {
+            throw Unexpected(L"<call_word>");
+        }
+
+        auto array = Array();
+        array.name = sym.name;
+        array.rank = sym.rank;
+
+        size_t sz = rank2size(array.rank);
+
+        --cur;
+        while (cur != end && is_normal_token(*cur)) {
+            if (++cur == end) throw EOFError(L"!+");
+            if (!is_ex_mark_token(*cur)) {
+                throw Unexpected(*cur, L"!+");
+            }
+            sz *= cur->size();
+            ++cur;
+        }
+
+        array.size = sz;
+        return array;
+    }
+
+    template <typename It>
+    While parse_while(It& cur, It end) {
+        wcout << "parse_while" << endl;
+        return While();
+    }
+
+    template <typename It>
+    Print parse_print(It& cur, It end) {
+        wcout << "parse_print" << endl;
+        auto last = cur;
+        while (last != end && !is_singo_token(*last)) {
+            ++last;
+        }
+
+        if (last == end) {
+            throw EOFError(L"singo");
+        }
+
+        auto ret = Print();
+        ret.expr = make_unique<Expr>(parse_expr(cur, end));
+        ret.ascii = (*last == L"신!!고!합니다!");
+        
+        cur = ++last;
+        return ret;
     }
 
     template <typename It>
     Stmt parse_stmt(It& cur, It end) {
+        wcout << "parse_stmt" << endl;
         auto last = cur;
         while (last != end && !is_endline_token(*last)) {
             ++last;
@@ -31,12 +215,24 @@ namespace ps {
         if (is_singo_token(last[-1])) {
             return parse_print(cur, end);
         }
-        cur = last;
-        return Array();
+        if (is_salute_token(last[-1])) {
+            return parse_while(cur, end);
+        }
+        
+        auto tmp = cur;
+        auto sym = parse_symbol(tmp, end);
+        if (!sym.call_word
+                && tmp != end
+                && is_array_ex_mark_token(*tmp)) {
+            return parse_array(cur, end);
+        }
+
+        return parse_expr(cur, end);
     }
 
     template <typename It>
     Program parse_program(It& cur, It end) {
+        wcout << "parse_program" << endl;
         Program program;
 
         while (true) {
@@ -49,7 +245,7 @@ namespace ps {
             program.stmts.push_back(std::move(stmt));
 
             if (cur != end && !is_endline_token(*cur)) {
-                EOFError(L"endline");
+                throw Unexpected(*cur, L"<endline>");
             }
         }
 

@@ -15,7 +15,7 @@
     <symbol> (대하여!)? 경례! <endline>
     (<stmt> <endline>)*
     바로!
-<array> -> <symbol> !!+ (<rank>!+)*
+<array> -> <name> <rank> !!+ (<rank>!+)*
 
 <var_set> -> <symbol> ! <pilseung_literal>?
 <add> -> <symbol> <pilseung_literal>

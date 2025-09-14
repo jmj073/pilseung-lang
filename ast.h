@@ -56,7 +56,8 @@ namespace ps {
     };
 
     struct Array {
-        Symbol symbol;
+        std::wstring name;
+        Rank rank;
         size_t size;
     };
 

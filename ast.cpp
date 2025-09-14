@@ -98,7 +98,8 @@ namespace ps {
 
     static void print_array(const Array& array) {
         wcout << L"Array{ ";
-        wcout << L"symbol: "; print_symbol(array.symbol);
+        wcout << L"name: " << array.name;
+        wcout << L", rank: " << rank2wstring(array.rank);
         wcout << L", size: " << array.size;
         wcout << L" }";
     }

@@ -1,28 +1,8 @@
-#include <regex>
-#include <ranges>
 
 #include "tokenize.h"
+#include "util.h"
 
 using namespace std;
-
-struct wregex_view: ranges::view_interface<wregex_view> {
-    using iterator = wsregex_iterator;
-
-    wregex_view(const wstring& str, const wregex& re)
-        : m_str(&str), m_re(&re) {}
-
-    iterator begin() const {
-        return wsregex_iterator(m_str->begin(), m_str->end(), *m_re);
-    }
-
-    iterator end() const {
-        return wsregex_iterator();
-    }
-
-private:
-    const wstring* m_str;
-    const wregex* m_re;
-};
 
 namespace ps {
     std::vector<std::wstring> tokenize(const std::wstring& code) {
@@ -48,6 +28,25 @@ namespace ps {
 
     bool is_singo_token(const std::wstring& token) {
         wregex re(LR"(신!!?고!합니다!)");
+        return regex_match(token, re);
+    }
+
+    bool is_normal_token(const std::wstring& token) {
+        wregex re(LR"([^님께!\s]+)");
+        return regex_match(token, re);
+    }
+
+    bool is_salute_token(const std::wstring& token) {
+        return token == L"경례!";
+    }
+
+    bool is_array_ex_mark_token(const std::wstring& token) {
+        wregex re(LR"(!!+)");
+        return regex_match(token, re);
+    }
+
+    bool is_ex_mark_token(const std::wstring& token) {
+        wregex re(LR"(!+)");
         return regex_match(token, re);
     }
 

@@ -14,7 +14,7 @@ int main() {
     ReadLine read_line;
 
     while (auto in = read_line.get(prompt)) {
-        auto tokens = ps::tokenize(*in);
+        auto tokens = ps::tokenize(*in + L'\n');
 
         for (auto& token: tokens) {
             wcout << L"<" << token << L">" << endl;

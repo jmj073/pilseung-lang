@@ -38,4 +38,14 @@ namespace ps {
             : SyntaxError(L"'" + token + L"' is expected")
         { }
     };
+
+    struct Unexpected: SyntaxError {
+        Unexpected(const std::wstring& un, const std::wstring& ex = L"")
+            : SyntaxError(L"token '" + un + L"' is unexpected"
+                + (ex.empty() ? ex : L", expected is '" + ex + L"'"))
+        { }
+    };
+
+    struct NotYet {
+    };
 }
