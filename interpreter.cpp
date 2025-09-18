@@ -11,6 +11,8 @@ int main() {
     std::wcin.imbue(std::locale());
 
     const wstring prompt = L"^^> ";
+    const wstring prompt_notyet = L"... ";
+
     ReadLine read_line;
 
     while (auto in = read_line.get(prompt)) {
@@ -20,9 +22,32 @@ int main() {
             wcout << L"<" << token << L">" << endl;
         }
 
-        auto ast = ps::parse(tokens);
+        try {
+            auto ast = ps::parse(tokens);
+            print_ast(ast);
+            wcout << endl;
+        } catch (ps::SyntaxError& e) {
+            wcerr << e.wwhat() << endl;
+        } catch (ps::NotYet& e) {
+            while (auto in = read_line.get(prompt_notyet)) {
+                auto new_tokens = ps::tokenize(*in + L'\n');
+                tokens.insert(tokens.end(), new_tokens.begin(), new_tokens.end());
+                for (auto& token: tokens) {
+                    wcout << L"<" << token << L">" << endl;
+                }
 
-        print_ast(ast);
-        wcout << endl << flush;
+                try {
+                    auto ast = ps::parse(tokens);
+                    print_ast(ast);
+                    wcout << endl;
+                    break;
+                } catch (ps::SyntaxError& e) {
+                    wcerr << e.wwhat() << endl;
+                    break;
+                } catch (ps::NotYet& e) {
+                }
+            }
+        }
+
     }
 }

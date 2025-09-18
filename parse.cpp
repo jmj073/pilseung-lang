@@ -9,8 +9,8 @@
 using namespace std;
 
 namespace ps {
-    static size_t rank2size(Rank rank) {
-        map<Rank, size_t> r2sz{
+    static inline size_t rank2size(Rank rank) {
+        static map<Rank, size_t> r2sz{
             { Rank::R1, 1 },
             { Rank::R2, 2 },
             { Rank::R3, 4 },
@@ -21,8 +21,8 @@ namespace ps {
         return (it == r2sz.end() ? 4 : it->second);
     }
 
-    static Rank str2rank(const wstring& str) {
-        map<wstring, Rank> s2r{
+    static inline Rank str2rank(const wstring& str) {
+        static map<wstring, Rank> s2r{
             { L"이병", Rank::R1 },
             { L"일병", Rank::R2 },
             { L"상병", Rank::R3 },
@@ -33,8 +33,8 @@ namespace ps {
         return (it == s2r.end() ? Rank::OTHER : it->second);
     }
 
-    static wstring rank2str(Rank rank) {
-        map<Rank, wstring> r2s{
+    static inline wstring rank2str(Rank rank) {
+        static map<Rank, wstring> r2s{
             { Rank::R1, L"이병" },
             { Rank::R2, L"일병" },
             { Rank::R3, L"상병" },
@@ -180,8 +180,57 @@ namespace ps {
 
     template <typename It>
     While parse_while(It& cur, It end) {
-        wcout << "parse_while" << endl;
-        return While();
+        auto _while = While();
+
+        _while.symbol = parse_symbol(cur, end);
+
+        if (cur == end) {
+            throw EOFError(L"경례!");
+        }
+
+        if (is_daehayeo_token(*cur)) {
+            _while.gt = true;
+            ++cur;
+        }
+
+        if (cur == end) {
+            throw EOFError(L"경례!");
+        }
+        if (!is_salute_token(*cur)) {
+            throw Unexpected(*cur, L"경례!");
+        }
+
+        ++cur;
+
+        while (true) {
+            if (cur != end) {
+                if (!is_endline_token(*cur)) {
+                    throw Unexpected(*cur, L"<endline>");
+                }
+                ++cur;
+            }
+
+            while (cur != end && is_endline_token(*cur)) {
+                ++cur;
+            }
+
+            if (cur == end) {
+                if (stdin_is_tty()) {
+                    throw NotYet();
+                }
+                throw EOFError(L"<stmt> or 바로!");
+            }
+
+            if (is_baro_token(*cur)) {
+                break;
+            }
+
+            _while.stmts.push_back(parse_stmt(cur, end));
+        }
+
+        ++cur;
+
+        return _while;
     }
 
     template <typename It>

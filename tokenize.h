@@ -14,4 +14,6 @@ namespace ps {
     bool is_salute_token(const std::wstring& token);
     bool is_array_ex_mark_token(const std::wstring& token);
     bool is_ex_mark_token(const std::wstring& token);
+    bool is_daehayeo_token(const std::wstring& token);
+    bool is_baro_token(const std::wstring& token);
 } // namespace ps
