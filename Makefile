@@ -8,7 +8,7 @@ CXXFLAGS=-O3 -Wall $(DEBUG) $(INCPATHS) -std=c++23
 # LDFLAGS=-O3 $(DEBUG) $(LIBPATHS) -L. -lreadline
 LDFLAGS=-O3 $(DEBUG) $(LIBPATHS)
 
-LIBSOURCES=readline.cpp tokenize.cpp parse.cpp ast.cpp
+LIBSOURCES=readline.cpp tokenize.cpp parse.cpp ast.cpp memory.cpp eval.cpp
 LIBOBJS=$(LIBSOURCES:%.cpp=%.o)
 
 MAIN=interpreter.cpp

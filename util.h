@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <regex>
 #include <ranges>
+#include <exception>
 
 struct wregex_view: std::ranges::view_interface<wregex_view> {
     using iterator = std::wsregex_iterator;
@@ -31,3 +32,26 @@ static inline bool stdin_is_tty() {
 static inline bool stdout_is_tty() {
     return isatty(fileno(stdout));
 }
+
+
+class WStringError: public std::exception {
+    std::wstring m_msg;
+    std::string utf8_msg;
+
+public:
+    explicit WStringError(const std::wstring& msg)
+        : std::exception()
+        , m_msg(msg)
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+        utf8_msg = conv.to_bytes(m_msg);
+    }
+
+    const char* what() const noexcept override {
+        return utf8_msg.c_str();
+    }
+
+    virtual const std::wstring& wwhat() const noexcept {
+        return m_msg;
+    }
+};

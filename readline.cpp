@@ -1,7 +1,6 @@
 // #include <readline/readline.h>
 // #include <readline/tilde.h>
 
-#include <iostream>
 #include <cstdlib>
 #include <unistd.h>
 #include <cstdio>
