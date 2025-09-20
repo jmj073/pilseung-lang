@@ -11,6 +11,10 @@ namespace ps {
         R1, R2, R3, R4, OTHER
     };
 
+    std::wstring rank2str(Rank rank);
+    Rank str2rank(const std::wstring& str);
+    size_t rank2size(Rank rank);
+
     struct VarSet;
     struct Add;
     struct Mul;

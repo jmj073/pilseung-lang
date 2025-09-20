@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cstdio>
+#include <iostream>
 
 #include "readline.h"
 #include "util.h"
@@ -42,4 +43,8 @@ optional<wstring> ReadLine::get(const wstring& prompt) {
         return nullopt;
     }
     return line;
+}
+
+ReadLine::operator bool() const {
+    return bool(wcin);
 }

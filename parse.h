@@ -12,6 +12,10 @@ namespace ps {
     Program parse(std::vector<std::wstring> tokens);
 
     struct SyntaxError: WStringError {
+        template <typename ...Types>
+        SyntaxError(Types&& ...args)
+            : WStringError(std::forward<Types>(args)...)
+        { }
     };
 
     struct EOFError: SyntaxError {

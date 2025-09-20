@@ -9,41 +9,7 @@
 using namespace std;
 
 namespace ps {
-    static inline size_t rank2size(Rank rank) {
-        static map<Rank, size_t> r2sz{
-            { Rank::R1, 1 },
-            { Rank::R2, 2 },
-            { Rank::R3, 4 },
-            { Rank::R4, 8 },
-        };
-        
-        auto it = r2sz.find(rank);
-        return (it == r2sz.end() ? 4 : it->second);
-    }
 
-    static inline Rank str2rank(const wstring& str) {
-        static map<wstring, Rank> s2r{
-            { L"이병", Rank::R1 },
-            { L"일병", Rank::R2 },
-            { L"상병", Rank::R3 },
-            { L"병장", Rank::R4 },
-        };
-
-        auto it = s2r.find(str);
-        return (it == s2r.end() ? Rank::OTHER : it->second);
-    }
-
-    static inline wstring rank2str(Rank rank) {
-        static map<Rank, wstring> r2s{
-            { Rank::R1, L"이병" },
-            { Rank::R2, L"일병" },
-            { Rank::R3, L"상병" },
-            { Rank::R4, L"병장" },
-        };
-
-        auto it = r2s.find(rank);
-        return (it == r2s.end() ? L"<unknown>" : it->second);
-    }
 
     template <typename It>
     int64_t parse_pilseung_literal(It&cur, It end);
@@ -64,7 +30,7 @@ namespace ps {
 
     template <typename It>
     int64_t parse_pilseung_literal(It&cur, It end) {
-        wcout << "parse_pilseung_literal" << endl;
+        // wcout << "parse_pilseung_literal" << endl;
         if (cur == end) throw EOFError(L"<pilseung_literal>");
         if (!is_pilseung_literal_token(*cur)) {
             throw Unexpected(*cur, L"<pilseung_literal>");
@@ -87,7 +53,7 @@ namespace ps {
 
     template <typename It>
     Symbol parse_symbol(It& cur, It end) {
-        wcout << "parse_symbol" << endl;
+        // wcout << "parse_symbol" << endl;
         auto symbol = Symbol();
 
         if (cur == end) throw EOFError(L"<name>");
@@ -109,7 +75,7 @@ namespace ps {
 
     template <typename It>
     Expr parse_expr(It& cur, It end) {
-        wcout << "parse_expr" << endl;
+        // wcout << "parse_expr" << endl;
         Symbol sym = parse_symbol(cur, end);
         if (cur == end || is_endline_token(*cur)) return sym;
 
@@ -151,7 +117,7 @@ namespace ps {
 
     template <typename It>
     Array parse_array(It& cur, It end) {
-        wcout << "parse_array" << endl;
+        // wcout << "parse_array" << endl;
         auto sym = parse_symbol(cur, end);
 
         if (sym.call_word) {
@@ -235,7 +201,7 @@ namespace ps {
 
     template <typename It>
     Print parse_print(It& cur, It end) {
-        wcout << "parse_print" << endl;
+        // wcout << "parse_print" << endl;
         auto last = cur;
         while (last != end && !is_singo_token(*last)) {
             ++last;
@@ -255,7 +221,7 @@ namespace ps {
 
     template <typename It>
     Stmt parse_stmt(It& cur, It end) {
-        wcout << "parse_stmt" << endl;
+        // wcout << "parse_stmt" << endl;
         auto last = cur;
         while (last != end && !is_endline_token(*last)) {
             ++last;
@@ -281,7 +247,7 @@ namespace ps {
 
     template <typename It>
     Program parse_program(It& cur, It end) {
-        wcout << "parse_program" << endl;
+        // wcout << "parse_program" << endl;
         Program program;
 
         while (true) {

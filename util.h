@@ -5,6 +5,7 @@
 #include <regex>
 #include <ranges>
 #include <exception>
+#include <codecvt>
 
 struct wregex_view: std::ranges::view_interface<wregex_view> {
     using iterator = std::wsregex_iterator;

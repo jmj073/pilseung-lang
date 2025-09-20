@@ -13,6 +13,10 @@ namespace ps {
     extern Memory mem;
 
     struct RuntimeError: WStringError {
+        template <typename ...Types>
+        RuntimeError(Types&& ...args)
+            : WStringError(std::forward<Types>(args)...)
+        { }
     };
 
     void eval(const Program& prog);

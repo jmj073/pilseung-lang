@@ -58,12 +58,14 @@ namespace ps {
         if (right_sz) {
             m_remain.insert({ right_sz, right_ptr });
         }
+
+        auto ret = i;
         
         for (uintptr_t end = i + sz; i < end; ++i) {
             m_mem.insert({ i, uint8_t(0) });
         }
 
-        return i;
+        return ret;
     }
 
     bool Memory::is_alloced(uintptr_t ptr, size_t sz) const {

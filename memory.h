@@ -4,6 +4,7 @@
 #include <map>
 #include <cstdint>
 #include <optional>
+#include <limits>
 
 namespace ps {
     class Memory {
@@ -47,7 +48,7 @@ namespace ps {
                     return std::nullopt;
                 }
                 T data;
-                auto p = (const uint8_t*)&data;
+                auto p = (uint8_t*)&data;
                 uintptr_t end = ptr + sizeof(data);
 
                 while (ptr < end) {
@@ -59,6 +60,6 @@ namespace ps {
 
         private:
             Umap m_mem;
-            Map m_remain;
+            Map m_remain{ { std::numeric_limits<size_t>::max(), uintptr_t(0) } };
     };
 } // namespace ps

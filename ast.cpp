@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 #include "ast.h"
 
@@ -6,7 +7,7 @@ using namespace std;
 
 namespace ps {
 
-    static wstring rank2wstring(Rank rank) {
+    wstring rank2str(Rank rank) {
         switch (rank) {
             case Rank::R1: return L"R1";
             case Rank::R2: return L"R2";
@@ -15,6 +16,30 @@ namespace ps {
             case Rank::OTHER: return L"OTHER";
         }
         return L"<unknown>";
+    }
+
+    Rank str2rank(const wstring& str) {
+        static map<wstring, Rank> s2r{
+            { L"이병", Rank::R1 },
+            { L"일병", Rank::R2 },
+            { L"상병", Rank::R3 },
+            { L"병장", Rank::R4 },
+        };
+
+        auto it = s2r.find(str);
+        return (it == s2r.end() ? Rank::OTHER : it->second);
+    }
+
+    size_t rank2size(Rank rank) {
+        static map<Rank, size_t> r2sz{
+            { Rank::R1, sizeof(int8_t) },
+            { Rank::R2, sizeof(int16_t) },
+            { Rank::R3, sizeof(int32_t) },
+            { Rank::R4, sizeof(int64_t) },
+        };
+        
+        auto it = r2sz.find(rank);
+        return (it == r2sz.end() ? sizeof(int) : it->second);
     }
 
     static void print_symbol(const Symbol& symbol);
@@ -31,7 +56,7 @@ namespace ps {
     static void print_symbol(const Symbol& symbol) {
         wcout << L"Symbol{ ";
         wcout << L"name: " << symbol.name;
-        wcout << L", rank: " << rank2wstring(symbol.rank);
+        wcout << L", rank: " << rank2str(symbol.rank);
         wcout << L", callword: " << boolalpha << symbol.call_word;
         wcout << L" }";
     }
@@ -99,7 +124,7 @@ namespace ps {
     static void print_array(const Array& array) {
         wcout << L"Array{ ";
         wcout << L"name: " << array.name;
-        wcout << L", rank: " << rank2wstring(array.rank);
+        wcout << L", rank: " << rank2str(array.rank);
         wcout << L", size: " << array.size;
         wcout << L" }";
     }
