@@ -19,10 +19,10 @@ namespace ps {
         auto rit = m_remain.end();
         uintptr_t i{};
         if (ptr) {
-            if (!is_free(*ptr, sz)) {
+            i = *ptr;
+            if (!is_free(i, sz)) {
                 return std::nullopt;
             }
-            i = *ptr;
 
             for (auto it = m_remain.begin(); it != m_remain.end(); ++it) {
                 uintptr_t begin = it->second;

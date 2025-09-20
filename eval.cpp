@@ -150,7 +150,7 @@ namespace ps {
             } else {
                 uintptr_t ptr = it->second;
                 if (!mem.is_alloced(ptr, sz)) {
-                    if (!mem.alloc(ptr, sz)) {
+                    if (!mem.alloc(sz, ptr)) {
                         throw RuntimeError(L"can't alloc memory");
                     }
                 }
