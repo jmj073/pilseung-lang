@@ -89,7 +89,7 @@ namespace ps {
 
             auto pslit = parse_pilseung_literal(cur, end);
 
-            if (cur == end || is_endline_token(*cur)) {
+            if (cur == end || is_endline_token(*cur) || is_singo_token(*cur)) {
                 auto vs = VarSet();
                 vs.symbol = sym;
                 vs.pslit = pslit;
