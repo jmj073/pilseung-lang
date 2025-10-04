@@ -35,7 +35,7 @@ namespace ps {
                 auto p = (const uint8_t*)&data;
                 uintptr_t end = ptr + sizeof(data);
 
-                while (ptr < end) {
+                while (ptr != end) {
                     m_mem[ptr++] = *p++;
                 }
 
@@ -51,7 +51,7 @@ namespace ps {
                 auto p = (uint8_t*)&data;
                 uintptr_t end = ptr + sizeof(data);
 
-                while (ptr < end) {
+                while (ptr != end) {
                     *p++ = m_mem[ptr++];
                 }
 
