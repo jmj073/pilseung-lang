@@ -214,8 +214,9 @@ namespace ps {
         auto ret = Print();
         ret.expr = make_unique<Expr>(parse_expr(cur, end));
         ret.ascii = (*last == L"신!!고!합니다!");
+
+        ++cur;
         
-        cur = ++last;
         return ret;
     }
 
