@@ -117,7 +117,9 @@ namespace ps {
         auto v = eval_expr(*print.expr);
         if (print.ascii) wcout << char(v);
         else wcout << v;
-        wcout << flush;
+        if (stdin_is_tty() && stdout_is_tty()) {
+            wcout << flush;
+        }
     }
 
     static void eval_array(const Array& array) {
