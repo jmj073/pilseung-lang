@@ -22,6 +22,9 @@ all: $(TARGET)
 $(TARGET): %: %.o libpilseung.a
 	$(LD) $^ -o $@ $(LDFLAGS)
 
+.deps: *.cpp *.h
+	$(CXX) $(CXXFLAGS) -MM *.cpp > .deps
+
 libpilseung.a: $(LIBOBJS)
 	$(AR) rcs $@ $^
 
@@ -29,4 +32,6 @@ libpilseung.a: $(LIBOBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf *.o *.a $(TARGET)
+	rm -rf *.o *.a $(TARGET) .deps
+
+-include .deps
